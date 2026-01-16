@@ -2,124 +2,83 @@ import random
 import timeit
 
 class ListSet:
-    def __init__(self, maxVal, capacity):
-        self.data = [0] * capacity
-        self.capacity = capacity
-        self.maxVal = maxVal
-        self.n = 0
+    def __init__(self):
+        self.data = []
 
     def insert(self, x):
-        if x > self.maxVal:
-            return print("Помилка! Значення елемента перевищує заданого значення.")
-        if self.n >= self.capacity:
-            return print("Помилка! Розмір множини перевищує заданий розмір.")
         if self.search(x) == -1:
-            self.data[self.n] = x
-            self.n += 1
+            self.data.append(x)
 
     def delete(self, x):
         pos = self.search(x)
         if pos == -1:
             return print("Помилка! Не можна видалити елемент, якого немає в множині.")
-        self.data[pos] = self.data[self.n - 1]
-        self.n -= 1
+        self.data.pop(pos)
         return print("Елемент", x, "видалено!")
 
     def search(self, x):
-        if x > self.maxVal:
-            return -1
-        for i in range(self.n):
+        for i in range(len(self.data)):
             if self.data[i] == x:
                 return i
         return -1
 
     def clear(self):
-        self.n = 0
+        self.data.clear()
         return print("Множину повністю очищено!")
 
     def union(self, set2):
-        UnionCapacity = self.n + set2.n
-        UnionMaxVal = max(self.maxVal, set2.maxVal)
-        UnionSet = ListSet(UnionMaxVal, UnionCapacity)
-        for i in range(self.n):
-            UnionSet.insert(self.data[i])
-        for i in range(set2.n):
-            UnionSet.insert(set2.data[i])
-        return UnionSet
+        result = ListSet()
+        for x in self.data:
+            result.insert(x)
+        for x in set2.data:
+            result.insert(x)
+        return result
 
     def intersection(self, set2):
-        IntersectionCapacity = min(self.n, set2.n)
-        IntersectionMaxVal = max(self.maxVal, set2.maxVal)
-        IntersectionSet = ListSet(IntersectionMaxVal, IntersectionCapacity)
-        for i in range(self.n):
-            if set2.search(self.data[i]) != -1:
-                IntersectionSet.insert(self.data[i])
-        return IntersectionSet
+        result = ListSet()
+        for x in self.data:
+            if set2.search(x) != -1:
+                result.insert(x)
+        return result
 
     def set_difference(self, set2):
-        SetDifferenceCapacity = self.n
-        SetDifferenceMaxVal = max(self.maxVal, set2.maxVal)
-        SetDifferenceSet = ListSet(SetDifferenceMaxVal, SetDifferenceCapacity)
-        for i in range(self.n):
-            if set2.search(self.data[i]) == -1:
-                SetDifferenceSet.insert(self.data[i])
-        return SetDifferenceSet
+        result = ListSet()
+        for x in self.data:
+            if set2.search(x) == -1:
+                result.insert(x)
+        return result
 
     def sym_difference(self, set2):
-        SymDifferenceCapacity = self.n + set2.n
-        SymDifferenceMaxVal = max(self.maxVal, set2.maxVal)
-        SymDifferenceSet = ListSet(SymDifferenceMaxVal, SymDifferenceCapacity)
-        for i in range(self.n):
-            if set2.search(self.data[i]) == -1:
-                SymDifferenceSet.insert(self.data[i])
-        for i in range(set2.n):
-            if self.search(set2.data[i]) == -1:
-                SymDifferenceSet.insert(set2.data[i])
-        return SymDifferenceSet
+        result = ListSet()
+        for x in self.data:
+            if set2.search(x) == -1:
+                result.insert(x)
+        for x in set2.data:
+            if self.search(x) == -1:
+                result.insert(x)
+        return result
 
     def is_subset(self, set1):
-        for i in range(self.n):
-            if set1.search(self.data[i]) == -1:
+        for x in self.data:
+            if set1.search(x) == -1:
                 return print("Множина В НЕ Є підмножиною А.")
         return print("Множина В Є підмножиною А.")
 
     def print(self):
-        for i in range(self.n):
-            print(self.data[i], end=' ')
+        for x in self.data:
+            print(x, end=' ')
         print()
 
 
 
-Set = ListSet(65536, 65536)
-for x in random.sample(range(1, 10), 7):
-    Set.insert(x)
-
-print("Множина А:")
-Set.print()
-
-Set.delete(5)
-print("Множина А:")
-Set.print()
-
-Search = Set.search(3)
-if Search == -1:
-    print("Елемента 3 немає в множині.")
-else:
-    print("Елемент 3 є в множині.")
-
-Set.clear()
-print("Множина А:")
-Set.print()
-
-
-Set1 = ListSet(65536, 65536)
+Set1 = ListSet()
 for x in random.sample(range(1, 8), 7):
     Set1.insert(x)
 
 print("Множина А:")
 Set1.print()
 
-Set2 = ListSet(65536, 65536)
+Set2 = ListSet()
 for y in random.sample(range(4, 10), 6):
     Set2.insert(y)
 
@@ -144,12 +103,12 @@ Set6.print()
 
 Set2.is_subset(Set1)
 
-Set = ListSet(65536, 65536)
-for x in random.sample(range(1, 65536), 65000):
+Set = ListSet()
+for x in random.sample(range(1, 5000), 4000):
     Set.insert(x)
 
 TimeSearch = timeit.timeit(
-    'Set.search(5000)',
+    'Set.search(2500)',
     globals=globals(),
     number=1000
 )
